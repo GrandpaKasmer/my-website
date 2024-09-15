@@ -1,0 +1,21 @@
+
+## How to Add Images
+1. Place your images in the `/images` folder.
+2. Update the `script.js` file to include the correct image file names in the `images` array for each option.
+
+## Technologies Used
+- **HTML5**: For the structure of the website.
+- **CSS3**: For styling and animations.
+- **JavaScript**: For dynamic functionality (floating box, image carousel).
+
+## Future Improvements
+- Add more categories and designs.
+- Improve the image carousel with smoother transitions.
+- Make the design fully responsive for mobile devices.
+
+## License
+This project is open-source. Feel free to use, modify, and distribute it as you wish!
+
+---
+
+Created with care by Grandpa Kasmer's design team. 🌱✨

@@ -1,0 +1,73 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: black;
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    text-align: center;
+}
+
+.header {
+    margin-top: 20px;
+}
+
+.floating-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: black;
+    border: 2px solid green;
+    padding: 20px;
+    animation: moveBox 10s infinite linear;
+}
+
+.dropdown {
+    background-color: black;
+    color: green;
+    border: 1px solid green;
+    font-size: 1.2rem;
+    padding: 5px;
+}
+
+.hidden {
+    display: none;
+}
+
+.carousel-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.carousel {
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+}
+
+.carousel-image {
+    width: 100%;
+    height: auto;
+}
+
+.carousel-btn {
+    background-color: black;
+    color: green;
+    border: 2px solid green;
+    padding: 10px;
+    cursor: pointer;
+}
+
+@keyframes moveBox {
+    0% { top: 10%; left: 10%; }
+    25% { top: 10%; left: 80%; }
+    50% { top: 80%; left: 80%; }
+    75% { top: 80%; left: 10%; }
+    100% { top: 10%; left: 10%; }
+}

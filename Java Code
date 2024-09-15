@@ -1,0 +1,50 @@
+const dropdown = document.getElementById('dropdown');
+const floatingBox = document.getElementById('floating-box');
+const carouselContainer = document.getElementById('carousel-container');
+const carouselImage = document.getElementById('carousel-image');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+// List of images for each option
+const images = {
+    level: ['image1.jpg', 'image2.jpg', 'image3.jpg'],
+    write: ['image4.jpg', 'image5.jpg', 'image6.jpg'],
+    izquierda: ['image7.jpg', 'image8.jpg', 'image9.jpg']
+};
+
+let currentOption = null;
+let currentIndex = 0;
+
+// Stop floating box and show carousel when option is clicked
+dropdown.addEventListener('click', () => {
+    floatingBox.style.animation = 'none'; // Stop animation
+});
+
+dropdown.addEventListener('change', () => {
+    currentOption = dropdown.value;
+    if (currentOption) {
+        showCarousel(currentOption);
+    }
+});
+
+// Function to show carousel based on selected option
+function showCarousel(option) {
+    carouselContainer.classList.remove('hidden');
+    currentIndex = 0;
+    carouselImage.src = images[option][currentIndex];
+}
+
+// Carousel navigation
+prevBtn.addEventListener('click', () => {
+    if (currentOption) {
+        currentIndex = (currentIndex === 0) ? images[currentOption].length - 1 : currentIndex - 1;
+        carouselImage.src = images[currentOption][currentIndex];
+    }
+});
+
+nextBtn.addEventListener('click', () => {
+    if (currentOption) {
+        currentIndex = (currentIndex === images[currentOption].length - 1) ? 0 : currentIndex + 1;
+        carouselImage.src = images[currentOption][currentIndex];
+    }
+});

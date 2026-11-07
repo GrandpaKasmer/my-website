@@ -1,0 +1,19 @@
+{
+  "name": "wonder-ticket",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The Wonder Ticket by Grandpa Kasmer: a private, scripted reflection arcade.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node scripts/build.mjs && node scripts/serve.mjs dist",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/serve.mjs dist",
+    "test": "node --test tests/*.test.mjs",
+    "check": "npm test && npm run build",
+    "ios:sync": "node scripts/build.mjs --ios",
+    "ios:open": "node scripts/open-ios.mjs"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "./",
+  "name": "The Wonder Ticket by Grandpa Kasmer",
+  "short_name": "Wonder Ticket",
+  "description": "A little wonder and a small adventure. Scripted reflections, not predictions.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#102724",
+  "theme_color": "#102724",
+  "icons": [
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
+    {"src":"icon-maskable.png","sizes":"512x512","type":"image/png","purpose":"maskable"}
+  ]
+}

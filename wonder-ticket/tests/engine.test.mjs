@@ -1,0 +1,21 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const html=fs.readFileSync(new URL('../web/index.html',import.meta.url),'utf8');
+const engine=html.match(/<script id="wonder-engine">([\s\S]*?)<\/script>/)[1];
+const sandbox={};vm.createContext(sandbox);vm.runInContext(engine,sandbox);const E=sandbox.WonderEngine;
+const date='2026-11-07T12:00:00.000Z',choice={door:'begin',mood:'curious',charm:'key'};
+function memory(initial){let value=initial??null;return{getItem:()=>value,setItem:(_k,v)=>{value=v;}};}
+test('all 64 choice combinations produce valid, complete tickets',()=>{let count=0;for(const d of E.doors)for(const m of E.moods)for(const c of E.charms){const t=E.makeTicket({door:d.id,mood:m.id,charm:c.id},date);assert.ok(E.validTicket(t));assert.match(t.observation,new RegExp(m.line.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')));assert.ok(t.action.includes(c.twist));assert.ok(t.disclaimer.includes('not a prediction'));count++;}assert.equal(count,64);});
+test('same explicit input and date produce the same ticket',()=>assert.equal(JSON.stringify(E.makeTicket(choice,date)),JSON.stringify(E.makeTicket(choice,date))));
+test('all choices affect the result',()=>{const a=E.makeTicket(choice,date);for(const [key,value]of[['door','space'],['mood','ready'],['charm','moon']]){const b=E.makeTicket({...choice,[key]:value},date);assert.notEqual(a.id,b.id);assert.notEqual(E.ticketText(a),E.ticketText(b));}});
+test('invalid selections and dates fail closed',()=>{for(const key of['door','mood','charm'])assert.throws(()=>E.makeTicket({...choice,[key]:'not-valid'},date));assert.throws(()=>E.makeTicket(choice,'bad-date'));});
+test('saved-ticket validation rejects damaged or oversized records',()=>{const t=E.makeTicket(choice,date);assert.equal(E.validTicket({...t,version:99}),false);assert.equal(E.validTicket({...t,title:'x'.repeat(2001)}),false);assert.equal(E.validTicket({...t,id:'<script>'}),false);assert.equal(E.validTicket({...t,door:'invalid'}),false);});
+test('HTML escaping prevents markup execution',()=>assert.equal(E.escapeHTML('<img src=x onerror="bad()">&\''),'&lt;img src=x onerror=&quot;bad()&quot;&gt;&amp;&#39;'));
+test('empty, corrupt and non-array storage are harmless',()=>{for(const s of[null,'{broken','{}','null','"text"'])assert.equal(E.readTickets(memory(s)).length,0);});
+test('saving is explicit, deduplicates and retains at most 20 tickets',()=>{const s=memory(),t=E.makeTicket(choice,date);assert.equal(E.readTickets(s).length,0);assert.equal(E.saveTicket(s,t).ok,true);assert.equal(E.saveTicket(s,t).already,true);assert.equal(E.readTickets(s).length,1);for(let i=1;i<=25;i++)E.saveTicket(s,E.makeTicket(choice,new Date(Date.parse(date)+i*1000)));assert.equal(E.readTickets(s).length,20);});
+test('storage failure is reported without throwing',()=>{const s={getItem(){throw Error('blocked');},setItem(){throw Error('quota');}};assert.equal(E.readTickets(s).length,0);assert.equal(E.saveTicket(s,E.makeTicket(choice,date)).ok,false);assert.equal(E.deleteTicket(s,'anything'),false);});
+test('deleting one saved ticket preserves the others',()=>{const s=memory(),a=E.makeTicket(choice,date),b=E.makeTicket({...choice,charm:'pebble'},date);E.saveTicket(s,a);E.saveTicket(s,b);assert.equal(E.deleteTicket(s,a.id),true);assert.equal(E.readTickets(s).length,1);assert.equal(E.readTickets(s)[0].id,b.id);});
+test('shared ticket includes the disclaimer and all reading sections',()=>{const text=E.ticketText(E.makeTicket(choice,date));for(const part of['not a prediction','If the pattern continues','A different possibility','Your ten-minute adventure'])assert.ok(text.includes(part));});
+test('application scripts parse and no remote scripts or tracking pixels are present',()=>{for(const [,code]of html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g))assert.doesNotThrow(()=>new vm.Script(code));assert.ok(!/<script[^>]+src\s*=/.test(html));assert.ok(!/https?:\/\/[^\s]+\.(?:js|css)/.test(html));});
